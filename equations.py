@@ -23,77 +23,82 @@ eqs_i = '''
         dgi/dt = -gi / tau_gi : 1
         '''
 
+# -----------------------------------------------------------------------------
+
 
 # The fours STDP rules described in the paper:
 
 # 1) Power-Law Weight Dependence STDP
 # this is the one mainly used in the paper, others are alternatives
 eqs_stdp_power = '''
-    w : 1
-    dx_pre/dt = -x_pre / tc_pre : 1.0 (event-driven)
-'''
+        w : 1
+        dpre_trace/dt = -pre_trace / tc_pre : 1 (event-driven)
+        '''
 
 eqs_stdp_pre_power = '''
-    x_pre += 1.0
-'''
+        pre_trace += 1.0
+        '''
 
 eqs_stdp_post_power = '''
-    w = clip(w + nu * (x_pre - x_tar) * (wmax - w)**mu, 0.0, wmax)
-'''
+        w = clip(w + nu * (pre_trace - x_tar) * (wmax - w)**mu, 0.0, wmax)
+        '''
+# -----------------------------------------------------------------------------
 
 
 # 2) Exponential Weight Dependence STDP
 eqs_stdp_exp = '''
-    w : 1
-    dx_pre/dt = -x_pre / tc_pre : 1.0 (event-driven)
-'''
+        w : 1
+        dx_pre/dt = -x_pre / tc_pre : 1 (event-driven)
+        '''
 
 eqs_stdp_pre_exp = '''
-    x_pre += 1.0
-'''
+        x_pre += 1.0
+        '''
 
 eqs_stdp_post_exp = '''
-    w = clip(w + nu_post * (x_pre * exp(-beta * w) - x_tar * exp(-beta * (wmax - w))), 0.0, wmax)
-'''
+        w = clip(w + nu_post * (x_pre * exp(-beta * w) - x_tar * exp(-beta * (wmax - w))), 0.0, wmax)
+        '''
+# -----------------------------------------------------------------------------
 
 # 3) Symmetric (Pre-and-Post) STDP
 eqs_stdp_sym = '''
-    w : 1
-    dx_pre/dt = -x_pre / tc_pre : 1.0 (event-driven)
-    dx_post/dt = -x_post / tc_post : 1.0 (event-driven)
-'''
+        w : 1
+        dx_pre/dt = -x_pre / tc_pre : 1 (event-driven)
+        dx_post/dt = -x_post / tc_post : 1 (event-driven)
+        '''
 
 eqs_stdp_pre_sym = '''
-    x_pre += 1.0
-    w = clip(w - nu_pre * x_post * (w**mu_sym), 0.0, wmax)
-'''
+        x_pre += 1.0
+        w = clip(w - nu_pre * x_post * (w**mu_sym), 0.0, wmax)
+        '''
 
 eqs_stdp_post_sym = '''
-    x_post += 1.0
-    w = clip(w + nu_post * (x_pre - x_tar) * (wmax - w)**mu_sym, 0.0, wmax)
-'''
+        x_post += 1.0
+        w = clip(w + nu_post * (x_pre - x_tar) * (wmax - w)**mu_sym, 0.0, wmax)
+        '''
+# -----------------------------------------------------------------------------
 
 
 # 4) Triplet STDP Rule
 eqs_stdp_triplet = '''
-    w : 1
-    post2before : 1.0
-    dpre/dt   = -pre / tc_pre : 1.0 (event-driven)
-    dpost1/dt = -post1 / tc_post1 : 1.0 (event-driven)
-    dpost2/dt = -post2 / tc_post2 : 1.0 (event-driven)
-'''
+        w : 1
+        post2before : 1.0
+        dpre/dt   = -pre / tc_pre : 1 (event-driven)
+        dpost1/dt = -post1 / tc_post1 : 1 (event-driven)
+        dpost2/dt = -post2 / tc_post2 : 1 (event-driven)
+        '''
 
 eqs_stdp_pre_triplet = '''
-    pre += 1.0
-    w = clip(w - nu_pre * post1, 0.0, wmax)
-'''
+        pre += 1.0
+        w = clip(w - nu_pre * post1, 0.0, wmax)
+        '''
 
 eqs_stdp_post_triplet = '''
-    post2before = post2
-    w = clip(w + nu_post * pre * post2before, 0.0, wmax)
-    post1 += 1.0
-    post2 += 1.0
-'''
+        post2before = post2
+        w = clip(w + nu_post * pre * post2before, 0.0, wmax)
+        post1 += 1.0
+        post2 += 1.0
+        '''
 
 
 #  Summary of variables

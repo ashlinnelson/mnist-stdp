@@ -1,4 +1,5 @@
 from brian2 import *
+import os
 
 # most of the following constants are found in 
 # the orignal Diehl and Cook codebase.
@@ -18,6 +19,12 @@ E_refrac = 5. * ms
 I_refrac = 2. * ms
 E_exc = 0.0 * mV
 E_inh = -100.0 * mV
+init_theta = 20.0 * mV
+d_theta = 0.05 * mV
+
+# synapse weight
+w_ei = 10.4
+w_ie = 17.0
 
 # Time Constants
 tau_e = 100*ms       
@@ -26,6 +33,11 @@ tau_ge = 1*ms
 tau_gi = 2*ms        
 tau_theta = 1e7*ms   
 tau_pre = 20*ms      
+
+# network config
+max_weight = 0.3
+max_delay = 10 * ms
+initial_weights = os.path.join("random", "initial.npy")
 
 # STDP Parameters: Power-Law Weight Dependence
 # 
