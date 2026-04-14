@@ -36,11 +36,15 @@ eqs_stdp_power = '''
         '''
 
 eqs_stdp_pre_power = '''
+        ge_post += w
         pre_trace += 1.0
         '''
-
 eqs_stdp_post_power = '''
-        w = clip(w + nu * (pre_trace - x_tar) * (wmax - w)**mu, 0.0, wmax)
+        is_ltp = int(pre_trace > x_tar)
+        is_ltd = int(pre_trace <= x_tar)
+        delta_w = nu * (pre_trace - x_tar)
+        
+        w = clip(w + is_ltp * delta_w * (wmax - w)**mu + is_ltd * delta_w * (w)**mu, 0.0, wmax)
         '''
 # -----------------------------------------------------------------------------
 
@@ -82,7 +86,7 @@ eqs_stdp_post_sym = '''
 # 4) Triplet STDP Rule
 eqs_stdp_triplet = '''
         w : 1
-        post2before : 1.0
+        post2before : 1
         dpre/dt   = -pre / tc_pre : 1 (event-driven)
         dpost1/dt = -post1 / tc_post1 : 1 (event-driven)
         dpost2/dt = -post2 / tc_post2 : 1 (event-driven)

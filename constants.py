@@ -7,6 +7,8 @@ import os
 n_input = 784
 n_e = 400
 n_i = n_e 
+time_per_img = 500 * ms
+target_weight = 78.0    # Magic number for normalization
 
 # Neuron parameters
 E_rest = -65. * mV 
@@ -19,6 +21,8 @@ E_refrac = 5. * ms
 I_refrac = 2. * ms
 E_exc = 0.0 * mV
 E_inh = -100.0 * mV
+# init_theta = 20.0 * mV
+# d_theta = 0.05 * mV
 init_theta = 20.0 * mV
 d_theta = 0.05 * mV
 
