@@ -4,7 +4,7 @@ eqs_e = '''
         dge/dt = -ge / tau_ge : 1
         dgi/dt = -gi / tau_gi : 1
         dtheta/dt = -theta / tau_theta : volt
-        v_thresh = E_thresh + theta : volt
+        v_thresh = E_thresh + theta - theta_offset: volt
         '''
 
 # Disable homeostasis during the inference
@@ -13,7 +13,7 @@ eqs_e_test = '''
         dge/dt = -ge / tau_ge : 1
         dgi/dt = -gi / tau_gi : 1
         theta : volt
-        v_thresh = E_thresh + theta : volt
+        v_thresh = E_thresh + theta - theta_offset: volt
         '''
 
 # Inhibitory Neurons

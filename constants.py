@@ -25,6 +25,7 @@ E_inh = -100.0 * mV
 # d_theta = 0.05 * mV
 init_theta = 20.0 * mV
 d_theta = 0.05 * mV
+theta_offset = 20.0 * mV 
 
 # synapse weight
 w_ei = 10.4

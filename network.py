@@ -4,12 +4,13 @@ import numpy as np
 from constants import *
 from equations import *
 
-def build_network_train():
+def build_network_train(input_rates):
 
     # Input Layer
-    #inp_group = PoissonGroup(n_input, rates=0*Hz, name='inp')
-    inp_group = SpikeGeneratorGroup(n_input, indices=[], times=[]*ms, name='inp')
-
+    # inp_group = PoissonGroup(n_input, rates=0*Hz, name='inp')
+    # inp_group = SpikeGeneratorGroup(n_input, indices=[], times=[]*ms, name='inp')
+    inp_group = PoissonGroup(n_input, rates='input_rates(t, i)', name='inp')
+    
     # Excitatory Layer
     exc_group = NeuronGroup(n_e, eqs_e, threshold='v > v_thresh', reset='v = E_reset; theta += d_theta', 
                             refractory=E_refrac, method='euler', name='exc')
@@ -43,11 +44,7 @@ def build_network_train():
 
     # Monitor the excitatory spikes
     spike_monitor = SpikeMonitor(exc_group, name='sp_exc')
-    
-    # # Network object
-    # net = Network(inp_group, exc_group, inh_group, S_inp_exc, S_exc_inh, S_inh_exc, 
-    #               spike_monitor)
-    
+        
     # @network_operation(dt=time_per_img)
     # def normalize_weights():
     #     # We use [:] to access the actual numpy values of the weights
@@ -56,6 +53,7 @@ def build_network_train():
     #     col_sums[col_sums == 0] = 1.0
     #     W = W * (target_weight / col_sums)
     #     S_inp_exc.w = W.flatten()
+    
     @network_operation(dt=time_per_img)
     def normalize_weights():
         w_array = S_inp_exc.w[:]
@@ -67,8 +65,13 @@ def build_network_train():
         # Find scaling factors and broadcast them directly to the 1D weight array
         scale_factors = target_weight / col_sums
         S_inp_exc.w = w_array * scale_factors[S_inp_exc.j]
+
+    # # Network object
+    # net = Network(inp_group, exc_group, inh_group, S_inp_exc, S_exc_inh, S_inh_exc, 
+                  # spike_monitor)
     net = Network(inp_group, exc_group, inh_group, S_inp_exc, S_exc_inh, S_inh_exc, 
                   spike_monitor, normalize_weights)
     
     print("Network built successfully!")
     return net, spike_monitor, inp_group
+    # return net, spike_monitor, inp_group, normalize_weights
