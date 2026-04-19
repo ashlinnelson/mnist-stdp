@@ -4,12 +4,12 @@ import numpy as np
 from constants import *
 from equations import *
 
-def build_network_train(input_rates):
+def build_network_train():
 
     # Input Layer
     # inp_group = PoissonGroup(n_input, rates=0*Hz, name='inp')
-    # inp_group = SpikeGeneratorGroup(n_input, indices=[], times=[]*ms, name='inp')
-    inp_group = PoissonGroup(n_input, rates='input_rates(t, i)', name='inp')
+    # inp_group = SpikeGeneratorGroup(n_input, indices=np.array([], dtype=int), times=np.array([]) * ms, name='inp')
+    inp_group = PoissonGroup(n_input, rates='input_rates(t - batch_start_time, i)', name='inp')
     
     # Excitatory Layer
     exc_group = NeuronGroup(n_e, eqs_e, threshold='v > v_thresh', reset='v = E_reset; theta += d_theta', 

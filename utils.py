@@ -2,10 +2,7 @@ import numpy as np
 from brian2 import *
 
 def generate_poisson_spikes(image_pixels, duration_ms, max_rate_hz=63.0, dt_ms=0.1):
-    """
-    Fast NumPy vectorized Poisson spike generation.
-    Guarantees no multiple spikes per time step (dt).
-    """
+
     # Normalize pixels (0-255) and convert to firing rates
     rates = (image_pixels / 255.0) * max_rate_hz
     
