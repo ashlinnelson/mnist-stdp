@@ -75,3 +75,41 @@ def build_network_train():
     print("Network built successfully!")
     return net, spike_monitor, inp_group
     # return net, spike_monitor, inp_group, normalize_weights
+
+def build_network_test():
+    # Input Layer 
+    inp_group = PoissonGroup(n_input, rates='input_rates(t - batch_start_time, i)', name='inp')
+    
+    # Excitatory Layer : Use eqs_e_test and remove theta += d_theta
+    exc_group = NeuronGroup(n_e, eqs_e_test, threshold='v > v_thresh', reset='v = E_reset', 
+                            refractory=E_refrac, method='euler', name='exc')
+    
+    # Inhibitory Layer
+    inh_group = NeuronGroup(n_i, eqs_i, threshold='v > I_thresh', reset='v = I_reset', 
+                            refractory=I_refrac, method='euler', name='inh')
+
+    exc_group.v = E_rest
+    inh_group.v = I_rest
+    
+    # Input -> Excitatory : NO STDP
+    S_inp_exc = Synapses(inp_group, exc_group, model='w : 1', on_pre='ge_post += w', name='s_inp_exc')
+    S_inp_exc.connect(p=1.0) # Fully connected
+    S_inp_exc.delay = 'rand() * max_delay' #  delays
+    
+    # Excitatory -> Inhibitory
+    S_exc_inh = Synapses(exc_group, inh_group, on_pre='ge_post += w_ei', name='s_exc_inh')
+    S_exc_inh.connect(j='i') # 1-to-1 mapping
+
+    # Inhibitory -> Excitatory (Winner-Take-All)
+    S_inh_exc = Synapses(inh_group, exc_group, on_pre='gi_post += w_ie', name='s_inh_exc')
+    S_inh_exc.connect(condition='i != j')
+
+    # Monitor the excitatory spikes
+    spike_monitor = SpikeMonitor(exc_group, name='sp_exc')
+        
+    # Network object
+    net = Network(inp_group, exc_group, inh_group, S_inp_exc, S_exc_inh, S_inh_exc, 
+                  spike_monitor)
+    
+    print("Test Network built successfully!")
+    return net, spike_monitor, inp_group
